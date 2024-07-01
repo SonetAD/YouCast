@@ -27,5 +27,5 @@ const errorHandle = (err, req, res, next) => {
 app.use(errorHandle);
 
 app.listen(3000, () => {
-  console.log('ser is ready');
+  console.log('Server is ready');
 });
