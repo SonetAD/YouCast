@@ -4,12 +4,17 @@
   "description": "This is the backend api server for YouCast",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "prod": "NODE_ENV=production node index.js"
   },
   "author": "Sonet Adhikary",
   "license": "MIT",
   "dependencies": {
+    "compression": "^1.7.4",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
     "scrape-youtube": "^2.4.0",
     "ytdl-core": "^4.11.5"
   }

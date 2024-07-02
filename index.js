@@ -1,8 +1,20 @@
 const express = require('express');
 const search = require('./search_youtube');
 const ytAudio = require('./yt_audio');
+const compression = require('compression');
+const helmet = require('helmet');
+const RateLimit = require('express-rate-limit');
 
 const app = express();
+const port = 3000;
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 20,
+});
+app.use(limiter);
+
+app.use(helmet());
+app.use(compression());
 
 app.get('/search/:userSearch', async (req, res) => {
   try {
@@ -26,6 +38,4 @@ const errorHandle = (err, req, res, next) => {
 };
 app.use(errorHandle);
 
-app.listen(3000, () => {
-  console.log('Server is ready');
-});
+app.listen(port);
