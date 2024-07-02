@@ -25,9 +25,9 @@ app.get('/search/:userSearch', async (req, res) => {
   }
 });
 
-app.get('/ytaudio:url', (req, res) => {
+app.get('/ytaudio/:vId', (req, res) => {
   try {
-    ytAudio(req.params.url);
+    ytAudio(req.params.vId, res);
   } catch (error) {
     throw new Error(error.message);
   }

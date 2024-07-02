@@ -1,9 +1,10 @@
 const ytdl = require('ytdl-core');
 
-const convertVideoToAudio = (url, res) => {
+const convertVideoToAudio = (vId, res) => {
   try {
+    const url = `http://www.youtube.com/watch?v=${vId}`;
     ytdl(url, {
-      quality: 'highestaudio',
+      quality: 'lowestaudio',
       filter: 'audioonly',
     }).pipe(res);
   } catch (er) {
