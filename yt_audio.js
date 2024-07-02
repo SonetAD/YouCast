@@ -5,7 +5,7 @@ const convertVideoToAudio = (vId, res) => {
     const url = `http://www.youtube.com/watch?v=${vId}`;
     res.setHeader('Content-Type', 'audio/mpeg');
     ytdl(url, {
-      quality: 'lowestaudio',
+      quality: 'highestaudio',
       filter: 'audioonly',
     }).pipe(res);
   } catch (er) {
