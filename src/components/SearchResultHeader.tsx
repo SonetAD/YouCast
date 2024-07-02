@@ -2,6 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {PropsWithChildren} from 'react';
 import FloatingActionButton from './FloatingActionButton';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import TrackPlayer from 'react-native-track-player';
 
 type SearchResultHeadTxProps = PropsWithChildren<{
   totalItem: number;
@@ -17,7 +18,7 @@ const SearchResultHeader = (props: SearchResultHeadTxProps) => {
         ]}>{`Total: ${props.totalItem}`}</Text>
 
       <FloatingActionButton
-        action={() => {
+        action={async () => {
           const options = {
             enableVibrateFallback: true,
             ignoreAndroidSystemSettings: false,

@@ -1,5 +1,6 @@
 import {Track} from 'react-native-track-player';
 import {ConvertAudio} from './youtube';
+import {Constants} from '../constants';
 
 type Params = {
   vId: string;
@@ -10,10 +11,9 @@ type Params = {
   duration: number;
 };
 export const TrackBuilder = async (params: Params): Promise<Track> => {
-  const audioData = await ConvertAudio(params.vId);
-  console.log(typeof audioData);
+  const url = `${Constants.apiUrl}/ytaudio/${params.vId}`;
   const track: Track = {
-    url: audioData,
+    url: url,
     title: params.title,
     artist: params.artist,
     date: params.date,

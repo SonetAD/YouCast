@@ -12,6 +12,9 @@ import VerifiedIcon from 'react-native-vector-icons/MaterialIcons';
 import EyeIcon from 'react-native-vector-icons/AntDesign';
 import CalanderIcon from 'react-native-vector-icons/Fontisto';
 import {ConvertAudio} from '../libs/youtube';
+import {TrackBuilder} from '../libs/trackbuilder';
+import {AddTrack} from '../services/player_service';
+import TrackPlayer from 'react-native-track-player';
 
 type CardProps = PropsWithChildren<{
   title: string;
@@ -20,6 +23,7 @@ type CardProps = PropsWithChildren<{
   verifiedChannel: boolean;
   thumbnail: string;
   duration: string;
+  durationSec: number;
   views: number;
   uploadDate: string;
   vId: string;
@@ -32,6 +36,7 @@ const Card: React.FC<CardProps> = ({
   verifiedChannel,
   thumbnail,
   duration,
+  durationSec,
   views,
   uploadDate,
   vId,
@@ -67,10 +72,19 @@ const Card: React.FC<CardProps> = ({
 
   const handePress = async () => {
     try {
-      const audioFile = await ConvertAudio(vId);
-      console.log(audioFile);
+      const trackData = {
+        vId: vId,
+        title: title,
+        artist: channelName,
+        duration: durationSec,
+        date: uploadDate,
+        thumbnail: thumbnail,
+      };
+      const track = await TrackBuilder(trackData);
+      await AddTrack(track);
+      TrackPlayer.play();
     } catch (err) {
-      console.log('Audo fucked up');
+      console.log(err);
     }
   };
   return (

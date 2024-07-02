@@ -10,16 +10,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {Search} from './libs/youtube';
 import Card from './components/Card';
 import SearchResultHeader from './components/SearchResultHeader';
+import {SetUpPlayer} from './services/player_service';
 
 const App = () => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [songList, setSongList] = useState<any>([]);
+  const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
+
+  const setUp = async () => {
+    const isSetUp = await SetUpPlayer();
+    setIsPlayerReady(isSetUp);
+  };
+  useEffect(() => {
+    (async () => {
+      await setUp();
+    })();
+  });
 
   const searchOnPress = async () => {
     try {
@@ -49,50 +61,61 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />
-      {isLoading ? (
+      {isPlayerReady ? (
         <ActivityIndicator color="#ffffff" size="large" style={styles.search} />
       ) : (
         <>
-          {songList.length > 0 ? (
-            <View>
-              <FlatList
-                data={songList}
-                keyExtractor={video => video.id}
-                renderItem={({item}) => (
-                  <Card
-                    title={item.title}
-                    channelName={item.channel.name}
-                    channelIcon={item.channel.thumbnail}
-                    verifiedChannel={item.channel.verified}
-                    thumbnail={item.thumbnail}
-                    duration={item.durationString}
-                    views={item.views}
-                    uploadDate={item.uploaded}
-                    vId={item.id}
-                  />
-                )}
-                ListHeaderComponent={
-                  <SearchResultHeader
-                    totalItem={songList.length}
-                    resetSearch={resetSearch}
-                  />
-                }
-              />
-            </View>
+          {isLoading ? (
+            <ActivityIndicator
+              color="#ffffff"
+              size="large"
+              style={styles.search}
+            />
           ) : (
-            <View style={styles.search}>
-              <TextInput
-                onEndEditing={searchOnPress}
-                style={styles.input}
-                value={searchInput}
-                onChangeText={txt => setSearchInput(txt)}
-                placeholder="Search Music"
-                placeholderTextColor="gray"
-              />
-              <TouchableOpacity style={styles.btn} onPress={searchOnPress}>
-                <Text style={styles.txt}>Search</Text>
-              </TouchableOpacity>
-            </View>
+            <>
+              {songList.length > 0 ? (
+                <View>
+                  <FlatList
+                    data={songList}
+                    keyExtractor={video => video.id}
+                    renderItem={({item}) => (
+                      <Card
+                        title={item.title}
+                        channelName={item.channel.name}
+                        channelIcon={item.channel.thumbnail}
+                        verifiedChannel={item.channel.verified}
+                        thumbnail={item.thumbnail}
+                        duration={item.durationString}
+                        views={item.views}
+                        uploadDate={item.uploaded}
+                        vId={item.id}
+                        durationSec={item.duration}
+                      />
+                    )}
+                    ListHeaderComponent={
+                      <SearchResultHeader
+                        totalItem={songList.length}
+                        resetSearch={resetSearch}
+                      />
+                    }
+                  />
+                </View>
+              ) : (
+                <View style={styles.search}>
+                  <TextInput
+                    onEndEditing={searchOnPress}
+                    style={styles.input}
+                    value={searchInput}
+                    onChangeText={txt => setSearchInput(txt)}
+                    placeholder="Search Music"
+                    placeholderTextColor="gray"
+                  />
+                  <TouchableOpacity style={styles.btn} onPress={searchOnPress}>
+                    <Text style={styles.txt}>Search</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           )}
         </>
       )}

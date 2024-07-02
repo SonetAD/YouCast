@@ -28,6 +28,6 @@ export const SetUpPlayer = async () => {
 };
 
 export const AddTrack = async (track: Track) => {
-  await TrackPlayer.add(track);
+  await TrackPlayer.load(track);
   await TrackPlayer.setRepeatMode(RepeatMode.Queue);
 };
