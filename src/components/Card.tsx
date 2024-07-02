@@ -79,12 +79,14 @@ const Card: React.FC<CardProps> = ({
         </View>
         <View style={styles.statContainer}>
           <View style={styles.statItem}>
-            <EyeIcon name="eye" />
-            <Text>{numberWithCommas(formatViewCount(views))}</Text>
+            <EyeIcon name="eye" color="#ffffff" />
+            <Text style={styles.txt}>
+              {numberWithCommas(formatViewCount(views))}
+            </Text>
           </View>
           <View style={styles.statItem}>
-            <CalanderIcon name="calendar" />
-            <Text>{uploadDate}</Text>
+            <CalanderIcon name="calendar" color="#ffff" />
+            <Text style={styles.txt}>{uploadDate}</Text>
           </View>
         </View>
       </View>
@@ -157,6 +159,9 @@ const styles = StyleSheet.create({
   channelIcon: {
     borderRadius: 50,
     marginHorizontal: 10,
+  },
+  txt: {
+    color: '#ffffff',
   },
 });
 

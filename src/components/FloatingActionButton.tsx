@@ -9,7 +9,7 @@ type Action = PropsWithChildren<{
 const FloatingActionButton = (props: Action) => {
   return (
     <TouchableOpacity onPress={props.action}>
-      <Icon name="burn" size={30} />
+      <Icon name="burn" size={30} color="#aaf203" />
     </TouchableOpacity>
   );
 };
