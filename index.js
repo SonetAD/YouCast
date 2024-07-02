@@ -1,9 +1,31 @@
-/**
- * @format
- */
+const express = require('express');
+const search = require('./search_youtube');
+const ytAudio = require('./yt_audio');
 
-import {AppRegistry} from 'react-native';
-import App from './src/App';
-import {name as appName} from './app.json';
+const app = express();
 
-AppRegistry.registerComponent(appName, () => App);
+app.get('/search/:userSearch', async (req, res) => {
+  try {
+    const searchRes = await search(req.params.userSearch);
+    res.json(searchRes);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+app.get('/ytaudio:url', (req, res) => {
+  try {
+    ytAudio(req.params.url);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+const errorHandle = (err, req, res, next) => {
+  res.status(500).send(err.message);
+};
+app.use(errorHandle);
+
+app.listen(3000, () => {
+  console.log('Server is ready');
+});
