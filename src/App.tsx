@@ -22,18 +22,22 @@ const App = () => {
   const [songList, setSongList] = useState<any>([]);
 
   const searchOnPress = async () => {
-    if (searchInput) {
-      setIsLoading(true);
-      const res = await Search(searchInput);
-      if (res) {
-        setSongList(res);
-        setIsLoading(false);
+    try {
+      if (searchInput) {
+        setIsLoading(true);
+        const res = await Search(searchInput);
+        if (res) {
+          setSongList(res);
+          setIsLoading(false);
+        } else {
+          Alert.alert('Oops!', 'Something went wrong.Please try again');
+          resetSearch();
+        }
       } else {
-        Alert.alert('Oops!', 'Something went wrong.Please try again');
-        resetSearch();
+        Alert.alert('Oops!', 'Please enter something to search');
       }
-    } else {
-      Alert.alert('Oops!', 'Please enter something to search');
+    } catch (err) {
+      Alert.alert('Opps!', 'Something Went wrong');
     }
   };
 
@@ -64,6 +68,7 @@ const App = () => {
                     duration={item.durationString}
                     views={item.views}
                     uploadDate={item.uploaded}
+                    vId={item.id}
                   />
                 )}
                 ListHeaderComponent={
