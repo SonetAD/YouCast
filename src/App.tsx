@@ -1,3 +1,4 @@
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,45 +11,74 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
 
 import {Search} from './libs/youtube';
 import Card from './components/Card';
 import SearchResultHeader from './components/SearchResultHeader';
 import {SetUpPlayer} from './services/player_service';
+import {GetData, SetData} from './libs/local_storage';
+import {Constants} from './constants';
+import TrackPreview from './components/TrackPreview';
 
 const App = () => {
-  const [searchInput, setSearchInput] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [songList, setSongList] = useState<any>([]);
-  const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [songList, setSongList] = useState([]);
+  const searchHistory = useRef(['']);
 
   const setUp = async () => {
     const isSetUp = await SetUpPlayer();
-    setIsPlayerReady(isSetUp);
+    console.log(isSetUp);
+    setIsLoading(!isSetUp);
   };
+
   useEffect(() => {
     (async () => {
-      await setUp();
+      try {
+        await setUp();
+        const getHistory = await GetData(Constants.searchHistory);
+        console.log('fetching history', getHistory);
+        if (getHistory.length > 0) {
+          const buildSongList = [];
+          for (let i = 0; i < getHistory.length; i++) {
+            if (getHistory[i]) {
+              const res = await Search(getHistory[i]);
+              buildSongList.push(...res);
+            }
+          }
+          setSongList(buildSongList);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     })();
-  });
+  }, []);
 
   const searchOnPress = async () => {
     try {
-      if (searchInput) {
-        setIsLoading(true);
-        const res = await Search(searchInput);
-        if (res) {
-          setSongList(res);
-          setIsLoading(false);
-        } else {
-          Alert.alert('Oops!', 'Something went wrong.Please try again');
-          resetSearch();
-        }
-      } else {
+      if (!searchInput.trim()) {
         Alert.alert('Oops!', 'Please enter something to search');
+        return;
       }
-    } catch (err) {
+
+      if (searchHistory.current.length >= 10) {
+        searchHistory.current.shift();
+      }
+
+      searchHistory.current.unshift(searchInput);
+      await SetData(Constants.searchHistory, searchHistory.current);
+
+      setIsLoading(true);
+      const res = await Search(searchInput);
+      if (res && res.length > 0) {
+        setSongList(res);
+        setIsLoading(false);
+      } else {
+        Alert.alert('Oops!', 'Something went wrong. Please try again');
+        resetSearch();
+      }
+    } catch (error) {
       Alert.alert('Opps!', 'Something Went wrong');
     }
   };
@@ -58,26 +88,25 @@ const App = () => {
     setIsLoading(false);
     setSongList([]);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />
-      {isPlayerReady ? (
+      {isLoading ? (
         <ActivityIndicator color="#ffffff" size="large" style={styles.search} />
       ) : (
         <>
-          {isLoading ? (
-            <ActivityIndicator
-              color="#ffffff"
-              size="large"
-              style={styles.search}
-            />
-          ) : (
+          {songList.length > 0 ? (
             <>
-              {songList.length > 0 ? (
+              {searchHistory.current.length <= 0 ? (
                 <View>
+                  <SearchResultHeader
+                    totalItem={songList.length}
+                    resetSearch={resetSearch}
+                  />
                   <FlatList
                     data={songList}
-                    keyExtractor={video => video.id}
+                    keyExtractor={video => video.id.toString()}
                     renderItem={({item}) => (
                       <Card
                         title={item.title}
@@ -92,30 +121,60 @@ const App = () => {
                         durationSec={item.duration}
                       />
                     )}
-                    ListHeaderComponent={
-                      <SearchResultHeader
-                        totalItem={songList.length}
-                        resetSearch={resetSearch}
-                      />
-                    }
                   />
                 </View>
               ) : (
-                <View style={styles.search}>
-                  <TextInput
-                    onEndEditing={searchOnPress}
-                    style={styles.input}
-                    value={searchInput}
-                    onChangeText={txt => setSearchInput(txt)}
-                    placeholder="Search Music"
-                    placeholderTextColor="gray"
+                <View>
+                  <View style={styles.dynamicSearchBar}>
+                    <TextInput
+                      onEndEditing={searchOnPress}
+                      style={styles.input}
+                      value={searchInput}
+                      onChangeText={txt => setSearchInput(txt)}
+                      placeholder="Search Music"
+                      placeholderTextColor="gray"
+                    />
+                    <TouchableOpacity
+                      style={styles.btn}
+                      onPress={searchOnPress}>
+                      <Text style={styles.txt}>Search</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <FlatList
+                    data={songList}
+                    keyExtractor={video => video.id.toString()}
+                    renderItem={({item}) => (
+                      <TrackPreview
+                        title={item.title}
+                        channelName={item.channel.name}
+                        channelIcon={item.channel.thumbnail}
+                        verifiedChannel={item.channel.verified}
+                        thumbnail={item.thumbnail}
+                        duration={item.durationString}
+                        views={item.views}
+                        uploadDate={item.uploaded}
+                        vId={item.id}
+                        durationSec={item.duration}
+                      />
+                    )}
                   />
-                  <TouchableOpacity style={styles.btn} onPress={searchOnPress}>
-                    <Text style={styles.txt}>Search</Text>
-                  </TouchableOpacity>
                 </View>
               )}
             </>
+          ) : (
+            <View style={styles.search}>
+              <TextInput
+                onEndEditing={searchOnPress}
+                style={styles.input}
+                value={searchInput}
+                onChangeText={txt => setSearchInput(txt)}
+                placeholder="Search Music"
+                placeholderTextColor="gray"
+              />
+              <TouchableOpacity style={styles.btn} onPress={searchOnPress}>
+                <Text style={styles.txt}>Search</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </>
       )}
@@ -154,5 +213,8 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  dynamicSearchBar: {
+    flexDirection: 'row',
   },
 });
