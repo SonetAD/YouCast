@@ -90,7 +90,11 @@ const Card: React.FC<CardProps> = ({
   return (
     <TouchableOpacity onPress={handePress}>
       <View style={styles.card}>
-        <Image source={{uri: thumbnail}} style={styles.thumbnail} />
+        <Image
+          source={{uri: thumbnail}}
+          style={styles.thumbnail}
+          resizeMode="cover"
+        />
         <View style={styles.detailsContainer}>
           <Text style={styles.title}>{trimmedTitle}</Text>
           <View style={styles.iconContainer}>
