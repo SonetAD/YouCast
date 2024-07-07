@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {PropsWithChildren} from 'react';
 
 type TrackPreviewProps = PropsWithChildren<{
@@ -26,10 +26,12 @@ const TrackPreview = ({
       <Image
         source={{uri: thumbnail}}
         style={styles.image}
-        resizeMode="center"
+        resizeMode="cover"
       />
-      <Text style={styles.title}>{trimmedTitle}</Text>
-      <Text style={styles.channelName}>{trimmedArtist}</Text>
+      <View>
+        <Text style={styles.title}>{trimmedTitle}</Text>
+        <Text style={styles.channelName}>{trimmedArtist}</Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -50,25 +52,21 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   image: {
-    height: 100,
-    width: 100,
+    height: 130,
     borderRadius: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#fff',
     textAlign: 'center',
-  },
-  channelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   channelName: {
     marginLeft: 5,
     fontSize: 14,
     color: 'gray',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

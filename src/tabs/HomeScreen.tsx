@@ -15,6 +15,7 @@ import {Constants} from '../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {NavContext} from '../contexts/NavContext';
 import TrackPreview from '../components/TrackPreview';
+import {SetUpPlayer} from '../services/player_service';
 
 const HomeScreen = () => {
   const [searchHistory, setSearchHistory] = useState();
@@ -25,6 +26,7 @@ const HomeScreen = () => {
   useEffect(() => {
     (async () => {
       try {
+        await SetUpPlayer();
         const gethistory = await GetData(Constants.searchHistory);
         setSearchHistory(gethistory);
       } catch {
@@ -65,7 +67,7 @@ const HomeScreen = () => {
           returnKeyType="search"
         />
         <TouchableOpacity style={styles.searchButton} onPress={searchOnPress}>
-          <Icon name="search" size={24} color="black" />
+          <Icon name="search" size={24} color="#fff" />
         </TouchableOpacity>
         <Animated.View
           style={[styles.errorContainer, {opacity: errorVisible ? 1 : 0}]}>
@@ -97,21 +99,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#171b1c',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    justifyContent: 'center',
     borderRadius: 10,
-    marginHorizontal: 20,
-    marginTop: 30,
+    borderWidth: 1,
+    borderColor: 'white',
+    width: '80%',
+    marginVertical: 20,
   },
   input: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
+    paddingVertical: 15,
   },
   searchButton: {
     padding: 10,
