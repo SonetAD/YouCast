@@ -6,6 +6,7 @@ import SearchScreen from '../tabs/SearchScreen';
 import {Constants} from '../constants';
 import NavContextProvider from '../contexts/NavContext';
 import CommunityScreen from '../tabs/CommunityScreen';
+import FeedbackScreen from '../tabs/Feedback';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,8 +16,8 @@ const getTabBarIcon = (route, focused, color, size) => {
     iconName = focused ? 'home' : 'home-outline';
   } else if (route.name === Constants.Search) {
     iconName = focused ? 'search' : 'search-outline';
-  } else if (route.name === Constants.Community) {
-    iconName = focused ? 'people' : 'people-outline';
+  } else if (route.name === Constants.Feedback) {
+    iconName = focused ? 'chatbox-ellipses' : 'chatbox-ellipses-outline';
   }
   return <Icon name={iconName} size={size} color={color} />;
 };
@@ -51,10 +52,10 @@ const TabScreen = ({navigation}) => {
         />
 
         <Tab.Screen
-          name={Constants.Community}
-          component={CommunityScreen}
+          name={Constants.Feedback}
+          component={FeedbackScreen}
           options={{
-            tabBarLabel: 'Community',
+            tabBarLabel: 'Feedback',
           }}
         />
       </Tab.Navigator>
