@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Dimensions, Image, StyleSheet, View} from 'react-native';
+import {Dimensions, Image, Pressable, StyleSheet, View} from 'react-native';
 
 import TrackPlayer, {Track} from 'react-native-track-player';
 import SongInfo from '../components/SongInfo';
@@ -9,6 +9,7 @@ import {AddTrack} from '../services/player_service';
 import {TrackBuilder} from '../libs/trackbuilder';
 import {StatusBar} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/EvilIcons';
 
 const {width} = Dimensions.get('window');
 
@@ -39,6 +40,13 @@ const PlayerScren = ({route, navigation}) => {
       <SongInfo track={track} />
       <SongSlider />
       <ControlCenter navigation={navigation} />
+      <Pressable
+        style={styles.popOutIcon}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <Icon name="chevron-down" size={40} color="#fff" />
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -63,5 +71,11 @@ const styles = StyleSheet.create({
   albumArtImg: {
     height: '100%',
     borderRadius: 10,
+  },
+  popOutIcon: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    margin: 10,
   },
 });

@@ -6,6 +6,26 @@ import {useProgress} from 'react-native-track-player';
 const SongSlider = () => {
   const {position, duration} = useProgress();
 
+  const convertSeconds = seconds => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.round(seconds % 60);
+
+    let timeString;
+    if (hours > 0) {
+      timeString = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    } else if (minutes > 0) {
+      timeString = `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+        .toString()
+        .padStart(2, '0')}`;
+    } else {
+      timeString = `0:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    return timeString;
+  };
   return (
     <View>
       <Slider
@@ -17,14 +37,8 @@ const SongSlider = () => {
         style={styles.sliderContainer}
       />
       <View style={styles.timeContainer}>
-        <Text style={styles.time}>
-          {new Date(position * 1000).toISOString().substring(15, 19)}
-        </Text>
-        <Text style={styles.time}>
-          {new Date((duration - position) * 1000)
-            .toISOString()
-            .substring(15, 19)}
-        </Text>
+        <Text style={styles.time}>{convertSeconds(position)}</Text>
+        <Text style={styles.time}>{convertSeconds(duration - position)}</Text>
       </View>
     </View>
   );

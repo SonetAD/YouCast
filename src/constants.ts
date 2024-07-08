@@ -5,6 +5,7 @@ export const Constants = {
   searchHistory: 'youcast_search_history',
   Home: 'HomeScreen',
   Search: 'SearchScreen',
+  Community: 'CommunityScreen',
   TabScreen: 'TabScreen',
   PlayerScreen: 'PlayerScreen',
   SearchResult: 'SearchResultScreen',

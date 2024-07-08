@@ -5,6 +5,7 @@ import HomeScreen from '../tabs/HomeScreen';
 import SearchScreen from '../tabs/SearchScreen';
 import {Constants} from '../constants';
 import NavContextProvider from '../contexts/NavContext';
+import CommunityScreen from '../tabs/CommunityScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +15,8 @@ const getTabBarIcon = (route, focused, color, size) => {
     iconName = focused ? 'home' : 'home-outline';
   } else if (route.name === Constants.Search) {
     iconName = focused ? 'search' : 'search-outline';
+  } else if (route.name === Constants.Community) {
+    iconName = focused ? 'people' : 'people-outline';
   }
   return <Icon name={iconName} size={size} color={color} />;
 };
@@ -44,6 +47,14 @@ const TabScreen = ({navigation}) => {
           component={SearchScreen}
           options={{
             tabBarLabel: 'Search',
+          }}
+        />
+
+        <Tab.Screen
+          name={Constants.Community}
+          component={CommunityScreen}
+          options={{
+            tabBarLabel: 'Community',
           }}
         />
       </Tab.Navigator>
