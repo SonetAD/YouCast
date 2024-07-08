@@ -17,7 +17,7 @@ import {NavContext} from '../contexts/NavContext';
 import TrackPreview from '../components/TrackPreview';
 import {SetUpPlayer} from '../services/player_service';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [searchHistory, setSearchHistory] = useState();
   const [searchText, setSearchText] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
@@ -54,6 +54,21 @@ const HomeScreen = () => {
       showErrorMessage('Please enter a search keyword');
     }
   };
+
+  const handlePress = (index: number) => {
+    const item = searchHistory[index];
+    const trackData = {
+      vId: item.id,
+      title: item.title,
+      artist: item.channel.name,
+      duration: item.duration,
+      date: item.uploaded,
+      thumbnail: item.thumbnail,
+    };
+    globalNavigation.navigate(Constants.PlayerScreen, {
+      playListData: trackData,
+    });
+  };
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />
@@ -79,13 +94,15 @@ const HomeScreen = () => {
           numColumns={2}
           data={searchHistory}
           keyExtractor={video => video.id.toString()}
-          renderItem={({item}) => (
-            <TrackPreview
-              title={item.title}
-              channelName={item.channel.name}
-              thumbnail={item.thumbnail}
-              vId={item.id}
-            />
+          renderItem={({item, index}) => (
+            <TouchableOpacity onPress={() => handlePress(index)}>
+              <TrackPreview
+                title={item.title}
+                channelName={item.channel.name}
+                thumbnail={item.thumbnail}
+                vId={item.id}
+              />
+            </TouchableOpacity>
           )}
         />
       </View>

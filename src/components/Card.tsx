@@ -70,69 +70,50 @@ const Card: React.FC<CardProps> = ({
   const numberWithCommas = (x: number | string): string =>
     x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-  const handePress = async () => {
-    try {
-      const trackData = {
-        vId: vId,
-        title: title,
-        artist: channelName,
-        duration: durationSec,
-        date: uploadDate,
-        thumbnail: thumbnail,
-      };
-      const track = await TrackBuilder(trackData);
-      await AddTrack(track);
-      TrackPlayer.play();
-    } catch (err) {
-      console.log(err);
-    }
-  };
   return (
-    <TouchableOpacity onPress={handePress}>
-      <View style={styles.card}>
-        <Image
-          source={{uri: thumbnail}}
-          style={styles.thumbnail}
-          resizeMode="cover"
-        />
-        <View style={styles.detailsContainer}>
-          <Text style={styles.title}>{trimmedTitle}</Text>
-          <View style={styles.iconContainer}>
-            <Image
-              source={{uri: channelIcon}}
-              style={[
-                styles.channelIcon,
-                styles.iconStyle,
-                {width: iconSize, height: iconSize},
-              ]}
+    <View style={styles.card}>
+      <Image
+        source={{uri: thumbnail}}
+        style={styles.thumbnail}
+        resizeMode="cover"
+      />
+      <View style={styles.detailsContainer}>
+        <Text style={styles.title}>{trimmedTitle}</Text>
+        <View style={styles.iconContainer}>
+          <Image
+            source={{uri: channelIcon}}
+            style={[
+              styles.channelIcon,
+              styles.iconStyle,
+              {width: iconSize, height: iconSize},
+            ]}
+          />
+          <Text style={styles.artist}>{trimmedArtist}</Text>
+          {verifiedChannel && (
+            <VerifiedIcon
+              name="verified-user"
+              style={[styles.iconStyle, {width: iconSize, height: iconSize}]}
             />
-            <Text style={styles.artist}>{trimmedArtist}</Text>
-            {verifiedChannel && (
-              <VerifiedIcon
-                name="verified-user"
-                style={[styles.iconStyle, {width: iconSize, height: iconSize}]}
-              />
-            )}
-          </View>
-          <View style={styles.statContainer}>
-            <View style={styles.statItem}>
-              <EyeIcon name="eye" color="#ffffff" />
-              <Text style={styles.txt}>
-                {numberWithCommas(formatViewCount(views))}
-              </Text>
-            </View>
-            <View style={styles.statItem}>
-              <CalanderIcon name="calendar" color="#ffff" />
-              <Text style={styles.txt}>{uploadDate}</Text>
-            </View>
-          </View>
+          )}
         </View>
-        <View style={styles.durationContainer}>
-          <Icon name="clockcircleo" size={20} color="#fff" />
-          <Text style={styles.duration}>{duration}</Text>
+        <View style={styles.statContainer}>
+          <View style={styles.statItem}>
+            <EyeIcon name="eye" color="#ffffff" />
+            <Text style={styles.txt}>
+              {numberWithCommas(formatViewCount(views))}
+            </Text>
+          </View>
+          <View style={styles.statItem}>
+            <CalanderIcon name="calendar" color="#ffff" />
+            <Text style={styles.txt}>{uploadDate}</Text>
+          </View>
         </View>
       </View>
-    </TouchableOpacity>
+      <View style={styles.durationContainer}>
+        <Icon name="clockcircleo" size={20} color="#fff" />
+        <Text style={styles.duration}>{duration}</Text>
+      </View>
+    </View>
   );
 };
 

@@ -12,7 +12,9 @@ type Params = {
 };
 export const TrackBuilder = async (params: Params): Promise<Track> => {
   const url = `${Constants.apiUrl}/ytaudio/${params.vId}`;
+  console.log(url);
   const track: Track = {
+    id: params.vId,
     url: url,
     title: params.title,
     artist: params.artist,

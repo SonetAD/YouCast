@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Constants} from './constants';
 import TabScreen from './screens/TabScreen';
 import SearchResultScreen from './screens/SearchResultScreen';
+import PlayerScreen from './screens/PlayerScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const App = () => {
           name={Constants.SearchResult}
           component={SearchResultScreen}
         />
+        <Stack.Screen name={Constants.PlayerScreen} component={PlayerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

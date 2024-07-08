@@ -22,7 +22,7 @@ const TrackPreview = ({
       : channelName;
 
   return (
-    <TouchableOpacity style={styles.card}>
+    <View style={styles.card}>
       <Image
         source={{uri: thumbnail}}
         style={styles.image}
@@ -32,7 +32,7 @@ const TrackPreview = ({
         <Text style={styles.title}>{trimmedTitle}</Text>
         <Text style={styles.channelName}>{trimmedArtist}</Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

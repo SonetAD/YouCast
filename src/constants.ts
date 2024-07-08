@@ -6,6 +6,7 @@ export const Constants = {
   Home: 'HomeScreen',
   Search: 'SearchScreen',
   TabScreen: 'TabScreen',
+  PlayerScreen: 'PlayerScreen',
   SearchResult: 'SearchResultScreen',
   deviceWidth: Dimensions.get('window').width,
   deviceHeight: Dimensions.get('window').height,
