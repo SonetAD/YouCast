@@ -5,7 +5,6 @@ import HomeScreen from '../tabs/HomeScreen';
 import SearchScreen from '../tabs/SearchScreen';
 import {Constants} from '../constants';
 import NavContextProvider from '../contexts/NavContext';
-import CommunityScreen from '../tabs/CommunityScreen';
 import FeedbackScreen from '../tabs/Feedback';
 
 const Tab = createBottomTabNavigator();

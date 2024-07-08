@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Animated,
   FlatList,
   StatusBar,
@@ -16,19 +17,30 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {NavContext} from '../contexts/NavContext';
 import TrackPreview from '../components/TrackPreview';
 import {SetUpPlayer} from '../services/player_service';
+import {Search} from '../libs/youtube';
 
 const HomeScreen = ({navigation}) => {
   const [searchHistory, setSearchHistory] = useState();
   const [searchText, setSearchText] = useState('');
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
         await SetUpPlayer();
         const gethistory = await GetData(Constants.searchHistory);
-        setSearchHistory(gethistory);
+        if (!gethistory) {
+          const firstSearch = await Search(
+            'Taiylor Swift,Beyonce,Rihana,Justin Bieber, Ed Sharan song music',
+          );
+          setSearchHistory(firstSearch);
+          setIsLoading(false);
+        } else {
+          setSearchHistory(gethistory);
+          setIsLoading(false);
+        }
       } catch {
         console.log('eror');
       }
@@ -69,43 +81,52 @@ const HomeScreen = ({navigation}) => {
       playListData: trackData,
     });
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />
-      <View style={styles.searchBar}>
-        <TextInput
-          style={styles.input}
-          placeholder="Search..."
-          value={searchText}
-          onChangeText={text => setSearchText(text)}
-          onSubmitEditing={searchOnPress}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={searchOnPress}>
-          <Icon name="search" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Animated.View
-          style={[styles.errorContainer, {opacity: errorVisible ? 1 : 0}]}>
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        </Animated.View>
-      </View>
-      <View style={styles.cardContainer}>
-        <FlatList
-          numColumns={2}
-          data={searchHistory}
-          keyExtractor={video => video.id.toString()}
-          renderItem={({item, index}) => (
-            <TouchableOpacity onPress={() => handlePress(index)}>
-              <TrackPreview
-                title={item.title}
-                channelName={item.channel.name}
-                thumbnail={item.thumbnail}
-                vId={item.id}
-              />
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#fff" />
+      ) : (
+        <>
+          <View style={styles.searchBar}>
+            <TextInput
+              style={styles.input}
+              placeholder="Search..."
+              value={searchText}
+              onChangeText={text => setSearchText(text)}
+              onSubmitEditing={searchOnPress}
+              returnKeyType="search"
+            />
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={searchOnPress}>
+              <Icon name="search" size={24} color="#fff" />
             </TouchableOpacity>
-          )}
-        />
-      </View>
+            <Animated.View
+              style={[styles.errorContainer, {opacity: errorVisible ? 1 : 0}]}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </Animated.View>
+          </View>
+          <View style={styles.cardContainer}>
+            <FlatList
+              numColumns={2}
+              data={searchHistory}
+              keyExtractor={video => video.id.toString()}
+              renderItem={({item, index}) => (
+                <TouchableOpacity onPress={() => handlePress(index)}>
+                  <TrackPreview
+                    title={item.title}
+                    channelName={item.channel.name}
+                    thumbnail={item.thumbnail}
+                    vId={item.id}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
