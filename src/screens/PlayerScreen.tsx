@@ -10,6 +10,8 @@ import {TrackBuilder} from '../libs/trackbuilder';
 import {StatusBar} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/EvilIcons';
+import WifiOff from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 const {width} = Dimensions.get('window');
 
@@ -17,15 +19,22 @@ const PlayerScren = ({route, navigation}) => {
   const {playListData} = route.params;
   console.log(playListData);
   const [track, setTrack] = useState<Track | null>();
+  const {isConnected} = useNetInfo();
+  const [isOfline, setIsOfline] = useState<boolean | null>(false);
 
   useEffect(() => {
     (async () => {
-      const track = await TrackBuilder(playListData);
-      await AddTrack(track);
-      const currentTrack = await TrackPlayer.getActiveTrack();
-      setTrack(currentTrack);
+      try {
+        setIsOfline(!isConnected);
+        if (isConnected) {
+          const track = await TrackBuilder(playListData);
+          await AddTrack(track);
+          const currentTrack = await TrackPlayer.getActiveTrack();
+          setTrack(currentTrack);
+        }
+      } catch {}
     })();
-  }, [playListData]);
+  }, [playListData, isConnected]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -39,7 +48,11 @@ const PlayerScren = ({route, navigation}) => {
       </View>
       <SongInfo track={track} />
       <SongSlider />
-      <ControlCenter navigation={navigation} />
+      {isOfline ? (
+        <WifiOff name="wifi-off" size={30} color="#fff" />
+      ) : (
+        <ControlCenter navigation={navigation} />
+      )}
       <Pressable
         style={styles.popOutIcon}
         onPress={() => {

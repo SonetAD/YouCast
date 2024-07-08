@@ -1,15 +1,17 @@
-import {
-  Alert,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React from 'react';
+import {Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Fontisto';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Ofline from '../components/Ofline';
 
 const FeedbackScreen = () => {
+  const {isConnected} = useNetInfo();
+  const [isOfline, setIsOfline] = useState<boolean | null>(false);
+
+  useEffect(() => {
+    setIsOfline(!isConnected);
+  }, [isConnected]);
+
   const openMessengerProfile = async () => {
     const messengerURL = 'http://m.me/sonet.adhikary.7';
     const facebookURL = 'https://www.facebook.com/sonet.adhikary.7';
@@ -20,6 +22,9 @@ const FeedbackScreen = () => {
     }
   };
 
+  if (isOfline) {
+    return <Ofline />;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.txt}>Contribute Your Ideas</Text>

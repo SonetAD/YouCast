@@ -18,6 +18,8 @@ import {NavContext} from '../contexts/NavContext';
 import TrackPreview from '../components/TrackPreview';
 import {SetUpPlayer} from '../services/player_service';
 import {Search} from '../libs/youtube';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Ofline from '../components/Ofline';
 
 const HomeScreen = ({navigation}) => {
   const [searchHistory, setSearchHistory] = useState();
@@ -25,27 +27,32 @@ const HomeScreen = ({navigation}) => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const {isConnected} = useNetInfo();
+  const [isOfline, setIsOfline] = useState<boolean | null>(false);
 
   useEffect(() => {
     (async () => {
       try {
-        await SetUpPlayer();
-        const gethistory = await GetData(Constants.searchHistory);
-        if (!gethistory) {
-          const firstSearch = await Search(
-            'Taiylor Swift,Beyonce,Rihana,Justin Bieber, Ed Sharan song music',
-          );
-          setSearchHistory(firstSearch);
-          setIsLoading(false);
-        } else {
-          setSearchHistory(gethistory);
-          setIsLoading(false);
+        setIsOfline(!isConnected);
+        if (isConnected) {
+          await SetUpPlayer();
+          const gethistory = await GetData(Constants.searchHistory);
+          if (!gethistory) {
+            const firstSearch = await Search(
+              'Taiylor Swift,Beyonce,Rihana,Justin Bieber, Ed Sharan song music',
+            );
+            setSearchHistory(firstSearch);
+            setIsLoading(false);
+          } else {
+            setSearchHistory(gethistory);
+            setIsLoading(false);
+          }
         }
       } catch {
         console.log('eror');
       }
     })();
-  }, []);
+  }, [isConnected]);
   const globalNavigation = useContext(NavContext);
 
   const showErrorMessage = message => {
@@ -81,6 +88,10 @@ const HomeScreen = ({navigation}) => {
       playListData: trackData,
     });
   };
+
+  if (isOfline) {
+    return <Ofline />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

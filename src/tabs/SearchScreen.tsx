@@ -7,15 +7,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {NavContext} from '../contexts/NavContext';
 import {Constants} from '../constants';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Ofline from '../components/Ofline';
 
 const SearchScreen = () => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const {isConnected} = useNetInfo();
+  const [isOfline, setIsOfline] = useState<boolean | null>(false);
+
+  useEffect(() => {
+    setIsOfline(!isConnected);
+  }, [isConnected]);
 
   const showErrorMessage = message => {
     setErrorMessage(message);
@@ -36,6 +44,9 @@ const SearchScreen = () => {
       showErrorMessage('Please enter a search keyword');
     }
   };
+  if (isOfline) {
+    return <Ofline />;
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />

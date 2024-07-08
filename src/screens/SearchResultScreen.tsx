@@ -14,20 +14,26 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomActivityIndicator from '../components/CustomActivityIndicator';
 import {SetData} from '../libs/local_storage';
 import {Constants} from '../constants';
-import {TrackBuilder} from '../libs/trackbuilder';
+import {useNetInfo} from '@react-native-community/netinfo';
+import Ofline from '../components/Ofline';
 
 const SearchResultScreen = ({route, navigation}) => {
   const {searchParams} = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [trackList, setTrackList] = useState();
+  const {isConnected} = useNetInfo();
+  const [isOfline, setIsOfline] = useState<boolean | null>(false);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await Search(searchParams);
-        setTrackList(res);
-        setIsLoading(false);
-        SetData(Constants.searchHistory, res);
+        setIsOfline(!isConnected);
+        if (isConnected) {
+          const res = await Search(searchParams);
+          setTrackList(res);
+          setIsLoading(false);
+          SetData(Constants.searchHistory, res);
+        }
       } catch {
         Alert.alert('Oops!', 'Something went wrong.Please try again', [
           {
@@ -39,7 +45,7 @@ const SearchResultScreen = ({route, navigation}) => {
         ]);
       }
     })();
-  }, [navigation, searchParams]);
+  }, [navigation, searchParams, isConnected]);
 
   const handlePress = (index: number) => {
     const item = trackList[index];
@@ -55,6 +61,9 @@ const SearchResultScreen = ({route, navigation}) => {
       playListData: trackData,
     });
   };
+  if (isOfline) {
+    return <Ofline />;
+  }
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#20202a" />
