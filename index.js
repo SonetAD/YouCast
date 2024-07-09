@@ -6,7 +6,8 @@ const helmet = require('helmet');
 const RateLimit = require('express-rate-limit');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 4000;
+
 const limiter = RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 20,
@@ -17,31 +18,31 @@ const limiter = RateLimit({
     xForwardedForHeader: false,
   },
 });
-app.use(limiter);
 
+app.use(limiter);
 app.use(helmet());
 app.use(compression());
 
-app.get('/search/:userSearch', async (req, res) => {
+app.get('/search/:userSearch', async (req, res, next) => {
   try {
     const searchRes = await search(req.params.userSearch);
+    console.log(searchRes[0]);
     res.json(searchRes);
   } catch (error) {
-    throw new Error(error.message);
+    next(error);
   }
 });
 
-app.get('/ytaudio/:vId', (req, res) => {
+app.get('/ytaudio/', async (req, res, next) => {
   try {
-    ytAudio(req.params.vId, res);
+    ytAudio(req.query.link, res);
   } catch (error) {
-    throw new Error(error.message);
+    next(error);
   }
 });
 
-const errorHandle = (err, req, res, next) => {
-  res.status(500).send(err.message);
-};
-app.use(errorHandle);
+app.use((err, req, res, next) => {
+  res.status(500).send('Error happend on server');
+});
 
 app.listen(port);
