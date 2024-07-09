@@ -7,7 +7,6 @@ const convertVideoToAudio = async (vId, res) => {
     res.setHeader('Content-Type', 'audio/mpeg');
     console.log('featching video');
     await ytdl(url, {
-      quality: 'lowestaudio',
       filter: 'audioonly',
     }).pipe(res);
     console.log('done');
