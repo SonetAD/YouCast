@@ -41,9 +41,9 @@ app.get('/ytaudio/:vId', (req, res, next) => {
   }
 });
 
-app.use((err, req, res, next) => {
-  res.status(500).send('Error happend on server');
-});
+// app.use((err, req, res, next) => {
+//   res.status(500).send('Error happend on server');
+// });
 
 app.listen(port, () => {
   console.log(`Server is running on port:${port}`);
