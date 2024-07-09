@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "prod": "NODE_ENV=production node index.js"
+    "prod": "NODE_ENV=production YTDL_NO_UPDATE=true node index.js"
   },
   "author": "Sonet Adhikary",
   "license": "MIT",
