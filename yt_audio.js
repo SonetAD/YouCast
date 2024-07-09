@@ -7,7 +7,13 @@ const ytAudio = async (vId, res) => {
     res.setHeader('Content-Type', 'audio/mpeg');
 
     console.log('Fetching video');
-    const stream = ytdl(url, { filter: 'audioonly' });
+    const stream = ytdl(url, {
+      filter: 'audioonly',
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+      },
+    });
 
     stream.on('error', (err) => {
       console.error('Stream error:', err);
