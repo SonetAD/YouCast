@@ -27,7 +27,7 @@ app.get('/search/:userSearch', async (req, res, next) => {
   try {
     const searchRes = await search(req.params.userSearch);
     res.json(searchRes);
-    console.log(res[0].vId);
+    console.log(res[0].id);
   } catch (error) {
     next(error);
   }
