@@ -8,25 +8,26 @@ const RateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 4000;
 
-const limiter = RateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 20,
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: {
-    xForwardedForHeader: false,
-  },
-});
+// const limiter = RateLimit({
+//   windowMs: 1 * 60 * 1000, // 1 minute
+//   max: 20,
+//   message: 'Too many requests from this IP, please try again later.',
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   validate: {
+//     xForwardedForHeader: false,
+//   },
+// });
 
-app.use(limiter);
-app.use(helmet());
-app.use(compression());
+// app.use(limiter);
+// app.use(helmet());
+// app.use(compression());
 
 app.get('/search/:userSearch', async (req, res, next) => {
   try {
     const searchRes = await search(req.params.userSearch);
     res.json(searchRes);
+    console.log(res[0].vId);
   } catch (error) {
     next(error);
   }

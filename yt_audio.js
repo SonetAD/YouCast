@@ -1,15 +1,15 @@
 const ytdl = require('ytdl-core');
 
-const convertVideoToAudio = (vId, res) => {
+const convertVideoToAudio = async (vId, res) => {
   try {
     const url = `http://www.youtube.com/watch?v=${vId}`;
     res.setHeader('Content-Type', 'audio/mpeg');
-    ytdl(url, {
+    await ytdl(url, {
       quality: 'lowestaudio',
       filter: 'audioonly',
     }).pipe(res);
-  } catch (er) {
-    throw new Error('Error converting vidoe to audio');
+  } catch (err) {
+    console.log(err);
   }
 };
 
