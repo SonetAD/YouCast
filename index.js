@@ -26,14 +26,13 @@ app.use(compression());
 app.get('/search/:userSearch', async (req, res, next) => {
   try {
     const searchRes = await search(req.params.userSearch);
-    console.log(searchRes[0]);
     res.json(searchRes);
   } catch (error) {
     next(error);
   }
 });
 
-app.get('/ytaudio/', async (req, res, next) => {
+app.get('/ytaudio', (req, res, next) => {
   try {
     ytAudio(req.query.link, res);
   } catch (error) {
@@ -45,4 +44,6 @@ app.use((err, req, res, next) => {
   res.status(500).send('Error happend on server');
 });
 
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Server is running on prt:${port}`);
+});
