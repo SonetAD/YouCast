@@ -1,18 +1,25 @@
 const ytdl = require('ytdl-core');
 
-const convertVideoToAudio = async (vId, res) => {
+const ytAudio = async (vId, res) => {
   try {
     const url = `http://www.youtube.com/watch?v=${vId}`;
-    console.log('setting header');
+    console.log('Setting header');
     res.setHeader('Content-Type', 'audio/mpeg');
-    console.log('featching video');
-    await ytdl(url, {
-      filter: 'audioonly',
-    }).pipe(res);
-    console.log('done');
+
+    console.log('Fetching video');
+    const stream = ytdl(url, { filter: 'audioonly' });
+
+    stream.on('error', (err) => {
+      console.error('Stream error:', err);
+      res.status(500).send('Error streaming audio');
+    });
+
+    stream.pipe(res);
+    console.log('Streaming audio');
   } catch (err) {
-    console.er(err);
+    console.error('Error:', err);
+    res.status(500).send('Error processing request');
   }
 };
 
-module.exports = convertVideoToAudio;
+module.exports = ytAudio;

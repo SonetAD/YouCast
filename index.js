@@ -32,7 +32,7 @@ app.get('/search/:userSearch', async (req, res, next) => {
   }
 });
 
-app.get('/ytaudio/:vId', (req, res, next) => {
+app.get('/ytaudio/:vId', (req, res) => {
   try {
     ytAudio(req.params.vId, res);
   } catch (error) {
