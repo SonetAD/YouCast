@@ -4,9 +4,11 @@ const ytAudio = require('./yt_audio');
 const compression = require('compression');
 const helmet = require('helmet');
 const RateLimit = require('express-rate-limit');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 4000;
+app.use(cors());
 
 // const limiter = RateLimit({
 //   windowMs: 1 * 60 * 1000, // 1 minute
